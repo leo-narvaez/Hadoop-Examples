@@ -1,14 +1,20 @@
-# Usa una imagen base que tenga Hadoop y Pig
-FROM fluddeni/hadoop-pig:latest
+# Usa una imagen base con OpenJDK
+FROM openjdk:8-jdk-alpine
 
-# Copia el archivo de datos (ajusta la ruta según tu estructura)
-COPY data/users.csv /data/users.csv
+# Usa una imagen base con OpenJDK
+FROM openjdk:8-jdk-alpine
 
-# Copia el script de bootstrap
-COPY bootstrap.sh /usr/local/bin/bootstrap.sh
+ENV PIG_VERSION=0.17.0
 
-# Da permisos de ejecución al script
-RUN chmod +x /usr/local/bin/bootstrap.sh
+RUN apk add --no-cache bash curl && \
+    curl -o /tmp/pig-$PIG_VERSION.tar.gz https://downloads.apache.org/pig/pig-$PIG_VERSION/pig-$PIG_VERSION.tar.gz && \
+    tar -xvf /tmp/pig-$PIG_VERSION.tar.gz -C /usr/local && \
+    rm /tmp/pig-$PIG_VERSION.tar.gz && \
+    ln -s /usr/local/pig-$PIG_VERSION /usr/local/pig
 
-# Comando por defecto para ejecutar el script de bootstrap
-CMD ["/usr/local/bin/bootstrap.sh"]
+ENV PATH=$PATH:/usr/local/pig/bin
+
+# Copia los scripts y el archivo CSV al contenedor
+COPY scripts /scripts
+
+CMD ["pig", "-x", "local", "/scripts/script.pig"]
