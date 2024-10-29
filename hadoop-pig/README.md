@@ -14,7 +14,7 @@ Clona este repositorio en tu máquina local:
 
 ```bash
 git clone https://github.com/leo-narvaez/Hadoop-Examples.git
-cd hadoop-pig-example
+cd hadoop-pig
 ```
 
 ### 2. Docker
